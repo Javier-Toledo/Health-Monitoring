@@ -6,7 +6,11 @@ const {Annotations} = require('../models');
 exports.add = async (req, res, next) => {
     try {
         // crear un paciente con los datos recibidos
-        const annotation = await Annotations.create({ ...req.body, UserId:req.user.id, PatientId:req.body.patientId });
+        const annotation = await Annotations.create({
+            ...req.body,
+            UserId:req.user.id,
+            PatientId:req.body.patientId,
+            date:Date.now() });
         res.json({ mensaje: 'The annotation was saved.', annotation });
     } catch (error) {
         console.error(error);
