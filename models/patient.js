@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     firtsName: { type: DataTypes.STRING, allowNull: false,
       validate:{ notEmpty: { args: true, msg: 'The name cannot be left empty.' } },
     },
-    lastName: { type: DataTypes.STRING, allowNull: false,
+    lastNames: { type: DataTypes.STRING, allowNull: false,
       validate:{ notEmpty: { args: true, msg: 'The lastNames cannot be left empty.' } },
     },
     bloodPressure: DataTypes.STRING,

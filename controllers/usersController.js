@@ -75,6 +75,6 @@ exports.add = async (req, res, next) => {
                 error: errorItem.message,
             }));
         }
-        res.json({ error: true, mensaje: 'Error al registrar Usuario' , errores });
+        res.json({ error: true, mensaje: 'Register Error User.' , errores });
     }
 };
