@@ -26,3 +26,24 @@ exports.add = async (req, res, next) => {
     }
 };
 
+// actualizar pacientes
+exports.updateOwn = async (req, res, next) => {
+    try {
+        // obtener el registro de los pacientes desde la bd
+        const patient = await Patient.findByPk(req.params.id);
+        if (!patient) {
+            res.status(404).json({ mensaje: 'The patient was not found.'});
+        } else {
+            // actualizar en la bd
+            // procesar las propiedades que viene en body
+            Object.keys(req.body).forEach((propiedad) => {
+                patient[propiedad] = req.body[propiedad];
+            });
+            // guaradar cambios
+            await patient.save();
+            res.json({ mensaje: 'The patient was updated.' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to update patient.' });
+    }
+};

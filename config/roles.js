@@ -16,6 +16,7 @@ exports.roles = () => {
     .readOwn('profile')
     .readAny(['user','patient','annotation'])
     .createOwn('annotation')
+    .updateAny('patient')
     .updateOwn('profile');
 
     ac.grant('manager')
