@@ -14,18 +14,21 @@ exports.roles = () => {
 
     ac.grant('user')
     .readOwn('profile')
-    .readAny(['user','patient'])
-    .updateOwn(['profile'])
-    .deleteOwn(['profile']);
+    .readAny(['user','patient','annotation'])
+    .createOwn('annotation')
+    .updateOwn('profile');
 
-    ac.grant('areaManager')
+    ac.grant('manager')
     .extend('user')
-    .createAny(['patient'])
-    .updateAny(['user','patient','profile'])
-    .deleteAny(['user','patient','profile']);
+    .createAny('patient')
+    .updateAny(['user','patient'])
+    .deleteAny('user');
 
     ac.grant('admin')
-    .extend('areaManager');
+    .extend('manager')
+    .createAny(['user','annotation'])
+    .updateAny('annotation')
+    .deleteAny(['patient','annotation']);
 
     return ac;
 };

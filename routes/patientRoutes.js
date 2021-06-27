@@ -1,7 +1,7 @@
 const patientsController = require('../controllers/patientsController');
 
 module.exports = (router, acessControl) => {
-  // rutas del recurso doctors
+  // rutas del recurso patients
 
   router.post('/patients', acessControl('createAny', 'patient'), patientsController.add);
 

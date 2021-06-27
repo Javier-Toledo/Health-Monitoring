@@ -13,43 +13,16 @@ module.exports = {
       },
       firtsName: {
         type: Sequelize.STRING,
-        allowNull: false,
-        validate:{
-            notEmpty: {
-                args: true,
-                msg: 'The name cannot be left empty',
-            },
-        },
+        allowNull: false
       },
       lastNames: {
         type: Sequelize.STRING,
-        allowNull: false,
-        validate:{
-            notEmpty: {
-                args: true,
-                msg: 'The lastNames cannot be left empty',
-            },
-        },
+        allowNull: false
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        allowNull: false,
         unique: true,
-        validate:{
-            notNull: {
-                args: true,
-                msg: 'The email cannot be empty',
-            },
-            notEmpty: {
-                args: true,
-                msg: 'The email cannot be empty',
-            },
-            isEmail: {
-                args: true,
-                msg: 'This is not a valid email',
-            },
-        },
       },
       password: {
         type: Sequelize.STRING,
