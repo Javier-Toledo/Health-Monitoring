@@ -93,3 +93,18 @@ exports.listArea = async (req, res, next) => {
         next();
     }
 };
+
+exports.listadmin = async (req, res, next) => {
+    try {
+        let roleadmin = `manager`;
+        // extraer la lista de usuarios
+        const user = await User.findAll({
+            where: {area: req.user.area , role: roleadmin },
+        });
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.json({ mensaje: 'Error reading users' });
+        next();
+    }
+};
