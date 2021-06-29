@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
 
-const {Patient} = require('../models');
+const {Patient, User} = require('../models');
 
 // agregar paciente
 exports.add = async (req, res, next) => {
@@ -45,5 +45,32 @@ exports.updateOwn = async (req, res, next) => {
         }
     } catch (error) {
         res.status(503).json({ mensaje: 'Failed to update patient.' });
+    }
+};
+
+exports.listPatientUser = async (req, res, next) => {
+    try {
+        const patient = await Patient.findAll({
+            include: [{
+              model: User,
+              as: 'users',
+              through: {
+                where: {
+                    UserId: req.user.id,
+                }
+              },
+              required: true
+            }]
+            
+          });
+        if(!patient) {
+            res.tatus(404).json({mensaje: 'No se encontró el paciente'})
+        } else {
+        res.json(patient);
+        }
+    } catch (error) {
+        console.error(error);
+        res.json({ mensaje: 'Error reading users' });
+        next();
     }
 };

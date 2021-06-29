@@ -78,3 +78,33 @@ exports.add = async (req, res, next) => {
         res.json({ error: true, mensaje: 'Register Error User.' , errores });
     }
 };
+
+// listar los usuarios
+exports.listArea = async (req, res, next) => {
+    try {
+        // extraer la lista de usuarios
+        const user = await User.findAll({
+            where: {area: req.user.area , workstation: req.user.workstation, id: {[Op.not]: `${req.user.id}`}},
+        });
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.json({ mensaje: 'Error reading users' });
+        next();
+    }
+};
+
+exports.listadmin = async (req, res, next) => {
+    try {
+        let roleadmin = `manager`;
+        // extraer la lista de usuarios
+        const user = await User.findAll({
+            where: {area: req.user.area , role: roleadmin },
+        });
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.json({ mensaje: 'Error reading users' });
+        next();
+    }
+};

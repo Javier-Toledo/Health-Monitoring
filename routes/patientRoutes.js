@@ -5,6 +5,6 @@ module.exports = (router, acessControl) => {
 
   router.post('/patients', acessControl('createAny', 'patient'), patientsController.add);
   router.put('/patients/:id', acessControl('updateAny', 'patient'), patientsController.updateOwn);
-
+  router.get('/patient-user', acessControl('readAny', 'patient'), patientsController.listPatientUser);
   return router;
 };
