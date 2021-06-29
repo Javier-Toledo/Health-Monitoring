@@ -30,8 +30,8 @@ exports.resetPassword = async (request, response, next) => {
         await user.save();
         //enviar el email
         const resultadoEmail = await passwordEmail(
-            `${user.nombre} ${user.apellidos}`,
-            user.email,
+            `${usuario.firtsName} ${usuario.lastNames}`,
+            usuario.email,
             token
         );
         if (resultadoEmail) {

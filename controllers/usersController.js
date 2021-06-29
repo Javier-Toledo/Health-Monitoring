@@ -30,25 +30,25 @@ exports.add = async (req, res, next) => {
         }
         
         // si si trae la contraseña y el email, proceder al registro
-        const datosUsuario = {...req.body};
+        const userData = {...req.body};
 
         if(req.file && req.file.filename) {
-          datosUsuario.avatar = req.file.filename;
+          userData.avatar = req.file.filename;
         }
 
         // cifrar la contraseña
         const salt = await bcrypt.genSalt(10);
-        datosUsuario.password = await bcrypt.hash(datosUsuario.password, salt);
+        userData.password = await bcrypt.hash(userData.password, salt);
 
         //generar el token de recuperación de contraseña
-        let token = await bcrypt.hash(datosUsuario.email + Date.now().toString(), 10);
+        let token = await bcrypt.hash(userData.email + Date.now().toString(), 10);
         token = token.replace(/\//g, "l");
         //guardar el token
-        datosUsuario.accountAuthToken = token;
-        datosUsuario.accountAuthExpire = Date.now() + 3600000;
+        userData.accountAuthToken = token;
+        userData.accountAuthExpire = Date.now() + 3600000;
 
         // guardar el usuario
-        const usuario = await User.create(datosUsuario);
+        const usuario = await User.create(userData);
 
         // evitar enviar la contraseña en la respuesta
         usuario.password = null;
@@ -75,6 +75,6 @@ exports.add = async (req, res, next) => {
                 error: errorItem.message,
             }));
         }
-        res.json({ error: true, mensaje: 'Error al registrar Usuario' , errores });
+        res.json({ error: true, mensaje: 'Register Error User.' , errores });
     }
 };

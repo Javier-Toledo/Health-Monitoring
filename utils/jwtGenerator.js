@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
  */
 exports.jwtGenetator = (datos) => jwt.sign(
   {
-    usuario: datos,
+    user: datos,
   },
   process.env.TOKEN_SECRET,
   { expiresIn: process.env.EXPIRE_TOKEN },

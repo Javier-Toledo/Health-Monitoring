@@ -11,13 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      
-      models.Patient.belongsToMany(models.User, { through: 'UserPatients' });
+      models.Patient.belongsToMany(models.User, {as:'nurse&doctor', through: 'user_patients' });
+      models.Patient.hasMany(models.Annotations, {as:'annotations'});
     }
   };
   Patient.init({
-    firtsName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
+    firtsName: { type: DataTypes.STRING, allowNull: false,
+      validate:{ notEmpty: { args: true, msg: 'The name cannot be left empty.' } },
+    },
+    lastName: { type: DataTypes.STRING, allowNull: false,
+      validate:{ notEmpty: { args: true, msg: 'The lastName cannot be left empty.' } },
+    },
     bloodPressure: DataTypes.STRING,
     oxygenSaturation: DataTypes.STRING,
     respiration: DataTypes.STRING,
@@ -27,7 +31,9 @@ module.exports = (sequelize, DataTypes) => {
     basalWater: DataTypes.STRING,
     insensibleLosses: DataTypes.STRING,
     volumeLiquids: DataTypes.STRING,
-    area: DataTypes.STRING,
+    area: { type: DataTypes.STRING, allowNull: false,
+      validate:{ notEmpty: { args: true, msg: 'The area cannot be left empty.' } },
+    },
     status: DataTypes.BOOLEAN
   }, {
     sequelize,

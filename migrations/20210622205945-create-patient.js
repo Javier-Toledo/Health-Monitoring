@@ -9,10 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       firtsName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       bloodPressure: {
         type: Sequelize.STRING
@@ -42,10 +44,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       area: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       status: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
       },
       createdAt: {
         allowNull: false,
