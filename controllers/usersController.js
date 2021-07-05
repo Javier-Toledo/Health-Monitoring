@@ -108,3 +108,38 @@ exports.listadmin = async (req, res, next) => {
         next();
     }
 };
+
+exports.update = async (req, res, next) => {
+    try {
+        // obtener el registro del videojuego desde la bd
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            res.status(404).json({ mensaje: 'The user was not found.'});
+        } else {
+                // actualizar en la bd
+                // generate new product
+                let newUser = req.body;
+                // if new image
+                if(req.file && req.file.filename) {
+                    newUser.avatar = req.file.filename;
+                } else {
+                    const user = await User.findByPk(req.params.id);
+                    newUser.avatar = user.avatar;
+                }
+                // cifrar la contraseña
+                const salt = await bcrypt.genSalt(10);
+                newUser.password = await bcrypt.hash(newUser.password, salt);
+                
+            // procesar las propiedades que viene en body
+            Object.keys(newUser).forEach((propiedad) => {
+                user[propiedad] = newUser[propiedad];
+            });
+            // guaradar cambios
+            await user.save();
+            res.json({ mensaje: 'The record was updated.' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to update user.' });
+        next();
+        }
+};

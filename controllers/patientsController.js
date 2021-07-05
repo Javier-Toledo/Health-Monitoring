@@ -1,6 +1,6 @@
 const { Op } = require("sequelize");
-
-const {Patient, User} = require('../models');
+const { sendPushNotification } = require('../utils/pushNotifications');
+const {Patient, User, Subscription,DataValuePatient} = require('../models');
 
 // agregar paciente
 exports.add = async (req, res, next) => {
@@ -30,20 +30,86 @@ exports.add = async (req, res, next) => {
 exports.updateOwn = async (req, res, next) => {
     try {
         // obtener el registro de los pacientes desde la bd
-        const patient = await Patient.findByPk(req.params.id);
+        const patient = await Patient.findByPk(req.params.id, {
+            include: [{
+              model: User,
+              as: 'users',
+              through: {
+                where: {}
+              },
+              required: true
+            }],
+          });
+          //console.log(patient);
+          //console.log(patient.users);
         if (!patient) {
             res.status(404).json({ mensaje: 'The patient was not found.'});
         } else {
+            let newPatient = req.body;
             // actualizar en la bd
             // procesar las propiedades que viene en body
-            Object.keys(req.body).forEach((propiedad) => {
-                patient[propiedad] = req.body[propiedad];
+            Object.keys(newPatient).forEach((propiedad) => {
+                patient[propiedad] = newPatient[propiedad];
             });
             // guaradar cambios
             await patient.save();
-            res.json({ mensaje: 'The patient was updated.' });
+
+            // recuperar la suscripción
+            const subscription = await Subscription.findOne({where: UserId = patient.users.id});
+            let endpoint = subscription.endpoint;
+            let p256dh = subscription.p256dh;
+            let auth = subscription.auth;
+            //console.log(subscription);
+            // formato a los datos de la suscripción
+            const subscriptionb = { endpoint, expirationTime: null, keys: { p256dh, auth } };
+            //console.log(subscriptionb);
+            // Comprobar valores
+            let datos = {
+                bloodPressure: "140/90",
+                oxygenSaturation: "98",
+                respiration: "10",
+                heartRate: "80",
+                glucose: "140/199",
+                centralVenousPressure: "10",
+                basalWater: "2000",
+                insensibleLosses: "200",
+                volumeLiquids: "80"
+            };
+
+            let mal =0;
+            let bien= 0;
+            Object.keys(datos).forEach((propiedad) => {
+                
+                if(patient[propiedad] <= datos[propiedad]){
+                    bien += 1 ;
+                }else{
+                    mal += 1;
+                }
+
+            });
+            //console.log(mal);
+            //console.log(bien);
+
+            if(mal===0){
+                // enviar notificación
+                sendPushNotification(
+                    subscriptionb,
+                    `El paciente ${patient.dataValues.firtsName} ${patient.dataValues.lastName}, ha sido actualizado`,
+                    `La información del paciente ${patient.firtsName} ${patient.lastName}, ha sido actualizada.`,
+                );
+            }else{
+                // enviar notificación de valores critico
+                sendPushNotification(
+                    subscriptionb,
+                    `El paciente ${patient.dataValues.firtsName} ${patient.dataValues.lastName}, ha sido actualizado y tiene datos con valor critico.`,
+                    `Las mediciones del paciente ${patient.firtsName} ${patient.lastName}, se encuentran fuera del margen del valor permitido.`,
+                );
+            }
+            
+            return res.json({ mensaje: 'The patient was updated.' });
         }
     } catch (error) {
+        console.log(error);
         res.status(503).json({ mensaje: 'Failed to update patient.' });
     }
 };
@@ -74,3 +140,25 @@ exports.listPatientUser = async (req, res, next) => {
         next();
     }
 };
+
+exports.updateManager = async (req, res, next) => {
+    try {
+        // obtener el registro de los pacientes desde la bd
+        const patient = await Patient.findByPk(req.params.id);
+        if (!patient) {
+            res.status(404).json({ mensaje: 'The patient was not found.'});
+        } else {
+            // actualizar en la bd
+            // procesar las propiedades que viene en body
+            Object.keys(req.body).forEach((propiedad) => {
+                patient[propiedad] = req.body[propiedad];
+            });
+            // guaradar cambios
+            await patient.save();
+            res.json({ mensaje: 'The patient was updated.' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to update patient.' });
+    }
+};
+
