@@ -1,5 +1,5 @@
 const passport = require('passport');
-
+const { notificationLoginEmail } = require('../utils/notificationLoginEmail');
 const { jwtGenetator } = require('../utils/jwtGenerator');
 
 const renderToken = (user) => {
@@ -39,6 +39,11 @@ exports.login = async (req, res, next) => {
       // es lo que se obtendrá al hacer login desde el frontend o postman
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error);
+        //enviar el email de notificación de login
+        const resultadoEmail = await notificationLoginEmail(
+          `${user.firtsName} ${user.lastNames}`,
+          user.email
+        );
         return res.json(renderToken(user));
       });
 

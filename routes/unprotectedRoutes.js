@@ -6,7 +6,7 @@ const usersController = require('../controllers/usersController');
 const sesionController = require('../controllers/SesionController');
 const accountController = require('../controllers/AccountController');
 const passwordController = require('../controllers/passwordController');
-
+const webPushController = require('../controllers/webPushController');
 
 module.exports = function () {
     // rutas que no requiren autenticación
@@ -19,5 +19,7 @@ module.exports = function () {
     router.post('/recover-password', passwordController.resetPassword);
     router.post('/validate-token-password', passwordController.validateToken);
     router.post('/update-password', passwordController.saveNewPassword);
+
+    router.post('/push-subscription', webPushController.subscribe);
     return router;
 };
