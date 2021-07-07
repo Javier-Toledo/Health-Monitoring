@@ -1,0 +1,6 @@
+# archivos y carpetas a excluir del repositorio
+
+node_modules/
+uploads/
+
+.env
