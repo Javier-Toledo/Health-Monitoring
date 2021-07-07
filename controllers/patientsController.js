@@ -162,3 +162,23 @@ exports.updateManager = async (req, res, next) => {
     }
 };
 
+exports.updatePatientArea = async (req, res, next) => {
+    try {
+        // obtener el registro del videojuego desde la bd
+        const patient = await Patient.findByPk(req.params.id);
+        if (!patient) {
+            res.status(404).json({ mensaje: 'The patient was not found.'});
+        } else {
+                // actualizar en la bd
+                // generate new patient
+                let newPatient = req.body;
+                patient.area = newPatient.area;
+            // guaradar cambios
+            await patient.save();
+            res.json({ mensaje: 'The patient was updated from area.' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to update patient from area.' });
+        next();
+        }
+};

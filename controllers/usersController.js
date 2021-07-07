@@ -143,3 +143,23 @@ exports.update = async (req, res, next) => {
         next();
         }
 };
+
+exports.updateUserArea = async (req, res, next) => {
+    try {
+        // obtener el registro del videojuego desde la bd
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            res.status(404).json({ mensaje: 'The user was not found.'});
+        } else {
+                // actualizar en la bd
+                // generate new user
+                let newUser = req.body;
+                user.area = newUser.area;
+            // guaradar cambios
+            await user.save();
+            res.json({ mensaje: 'The user was updated from area.' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to update user from area.' });
+    }
+};
