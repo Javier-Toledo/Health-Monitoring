@@ -24,7 +24,7 @@ exports.roles = () => {
     .extend('user')
     .createAny('patient')
     .updateAny(['user','patient-m'])
-    .deleteAny('user');
+    .deleteAny(['user','patient-m']);
 
     ac.grant('admin')
     .extend('manager')

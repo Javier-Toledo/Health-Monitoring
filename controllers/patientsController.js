@@ -182,3 +182,18 @@ exports.updatePatientArea = async (req, res, next) => {
         next();
         }
 };
+
+// delete patient
+exports.delete = async (req, res, next) => {
+    try {
+        const patient = await Patient.findByPk(req.params.id);
+        if (!patient) {
+            res.status(404).json({ mensaje: 'The patient was not found.'});
+        } else {
+            await patient.destroy(); // patient.destroy({ where: {id: req.params.id }});
+            res.json({ mensaje: 'Patient was deleted ' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to delete patient. ' });
+    }
+};

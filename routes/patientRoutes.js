@@ -8,5 +8,6 @@ module.exports = (router, acessControl) => {
   router.get('/patient-user', acessControl('readAny', 'patient'), patientsController.listPatientUser);
   router.put('/patients-manager/:id', acessControl('updateAny', 'patient-m'), patientsController.updateManager);
   router.put('/patients-update-area/:id', acessControl('updateAny', 'patient-m'),patientsController.updatePatientArea);
+  router.delete('/patients/:id', acessControl('deleteAny', 'patient-m'),patientsController.delete);
   return router;
 };

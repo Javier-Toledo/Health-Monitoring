@@ -163,3 +163,18 @@ exports.updateUserArea = async (req, res, next) => {
         res.status(503).json({ mensaje: 'Failed to update user from area.' });
     }
 };
+
+// delete User
+exports.delete = async (req, res, next) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            res.status(404).json({ mensaje: 'The user was not found.'});
+        } else {
+            await user.destroy(); // user.destroy({ where: {id: req.params.id }});
+            res.json({ mensaje: 'User was deleted.' });
+        }
+    } catch (error) {
+        res.status(503).json({ mensaje: 'Failed to delete user. ' });
+    }
+};
