@@ -7,6 +7,7 @@ const router = express.Router();
 const patientRoutes = require('./patientRoutes');
 const annotationsRoutes = require('./annotationsRoutes');
 const userRoutes = require('./userRoutes');
+const messagesRoutes = require('./messagesRoutes');
 
 module.exports = () => {
 
@@ -14,6 +15,7 @@ module.exports = () => {
   patientRoutes(router, acessControl);
   annotationsRoutes(router, acessControl);
   userRoutes(router, acessControl);
+  messagesRoutes(router, accessControl);
   
   return router;
 }

@@ -14,10 +14,11 @@ exports.roles = () => {
 
     ac.grant('user')
     .readOwn('profile')
-    .readAny(['user','patient','annotation'])
+    .readAny(['user','patient','annotation','messages'])
     .createOwn('annotation')
     .updateAny('patient')
-    .updateOwn('profile');
+    .updateOwn('profile')
+    .deleteOwn('messages');
 
     ac.grant('manager')
     .extend('user')

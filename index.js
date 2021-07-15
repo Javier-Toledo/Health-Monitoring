@@ -4,11 +4,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const passport = require('passport')
+const { Server } = require('socket.io');
+const http = require('http');
 
 require('./middlewares/auth');
 const models = require('./models');
 const routes = require('./routes');
 const unprotectedRoutes = require('./routes/unprotectedRoutes');
+
+const { chatSocket } = require('./utils/chatSocket');
 
 models.sequelize.authenticate()
   .then(() =>
@@ -36,7 +40,24 @@ app.use('/', unprotectedRoutes(
   
 app.use('/', passport.authenticate('jwt', { session:false}), routes());
 
+// habilitar socket.io
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('cliente conectado');
+  chatSocket(socket); // llamar a la función para operar el socket
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
 // server port
-app.listen(app.get('port'), () => {
+server.listen(app.get('port'), () => {
   console.log(`up and runnig on port ${app.get('port')}`);
 });

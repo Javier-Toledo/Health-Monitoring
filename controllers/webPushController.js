@@ -14,7 +14,7 @@ exports.subscribe = async (req,res,next) => {
     const subscriptionb = await Subscription.findOne({
       where: {endpoint: req.body.endpoint}
     });
-    if(!subscriptionb.endpoint) {
+    if(!subscriptionb) {
       await Subscription.create({
         subscription,
         endpoint:req.body.endpoint,
