@@ -15,7 +15,7 @@ module.exports = () => {
   patientRoutes(router, acessControl);
   annotationsRoutes(router, acessControl);
   userRoutes(router, acessControl);
-  messagesRoutes(router, accessControl);
+  messagesRoutes(router, acessControl);
   
   return router;
 }
