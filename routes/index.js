@@ -8,6 +8,7 @@ const patientRoutes = require('./patientRoutes');
 const annotationsRoutes = require('./annotationsRoutes');
 const userRoutes = require('./userRoutes');
 const messagesRoutes = require('./messagesRoutes');
+const reviewsRoutes = require('./reviewsRoutes');
 
 module.exports = () => {
 
@@ -16,6 +17,7 @@ module.exports = () => {
   annotationsRoutes(router, acessControl);
   userRoutes(router, acessControl);
   messagesRoutes(router, acessControl);
+  reviewsRoutes(router, acessControl);
   
   return router;
 }

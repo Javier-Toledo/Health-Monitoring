@@ -13,17 +13,18 @@ exports.roles = () => {
     //aqui los permisos de rol: ninguno
 
     ac.grant('user')
-    .readOwn('profile')
+    .readOwn(['profile','review'])
     .readAny(['user','patient','annotation','messages'])
     .createOwn('annotation')
-    .updateAny('patient')
-    .updateOwn('profile')
+    .updateAny(['patient','review'])
+    .updateOwn(['profile','review'])
     .deleteOwn('messages');
 
     ac.grant('manager')
     .extend('user')
-    .createAny('patient')
-    .updateAny(['user','patient-m'])
+    .createAny(['patient','review'])
+    .readAny(['review'])
+    .updateAny(['user','patient-m','review'])
     .deleteAny(['user','patient-m']);
 
     ac.grant('admin')
