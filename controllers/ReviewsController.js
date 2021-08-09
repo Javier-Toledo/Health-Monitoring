@@ -120,3 +120,18 @@ exports.updateAllManagerReviewPatient = async (req, res, next) => {
       res.status(503).json({ mensaje: 'Failed to update review for patient.' });
   }
 };
+
+// delete patient
+exports.delete = async (req, res, next) => {
+  try {
+      const review = await Review.findByPk(req.params.id);
+      if (!review) {
+          res.status(404).json({ mensaje: 'The review for patient was not found.'});
+      } else {
+          await review.destroy(); // review.destroy({ where: {id: req.params.id }});
+          res.json({ mensaje: 'review for patient was deleted ' });
+      }
+  } catch (error) {
+      res.status(503).json({ mensaje: 'Failed to delete review for patient. ' });
+  }
+};

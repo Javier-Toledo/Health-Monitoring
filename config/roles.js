@@ -22,10 +22,10 @@ exports.roles = () => {
 
     ac.grant('manager')
     .extend('user')
-    .createAny(['patient','review'])
-    .readAny(['review'])
-    .updateAny(['user','patient-m','review'])
-    .deleteAny(['user','patient-m']);
+    .createAny(['patient','review','user-patient'])
+    .readAny(['review','user-patient'])
+    .updateAny(['user','patient-m','review','user-patient'])
+    .deleteAny(['user','patient-m','review']);
 
     ac.grant('admin')
     .extend('manager')
