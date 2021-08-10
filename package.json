@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrations": "npx sequelize db:migrate",
     "start": "npx sequelize-cli db:migrate && node ./index.js",
-    "start:dev": "nodemon ./index.js"
+    "start:dev": "nodemon ./index.js",
+    "test": "npx mocha test/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -28,6 +30,9 @@
     "shortid": "^2.2.16"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.0.3",
     "nodemon": "^2.0.7",
     "sequelize-cli": "^6.2.0"
   }
