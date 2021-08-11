@@ -1,4 +1,4 @@
-
+const { Op } = require("sequelize");
 const bcrypt = require ('bcrypt');
 const {User} = require('../models');
 
@@ -25,7 +25,7 @@ exports.add = async (req, res, next) => {
     try {
         // validar que venga la contraseña
         if (!req.body.password) {
-            res.status(400).json({ menssage: 'The password and email are required.' });
+            res.status(400).json({ error: true, message: 'The password and email are required.' });
             next();
         }
         
@@ -48,25 +48,25 @@ exports.add = async (req, res, next) => {
         userData.accountAuthExpire = Date.now() + 3600000;
 
         // guardar el usuario
-        const usuario = await User.create(userData);
+        const user = await User.create(userData);
 
         // evitar enviar la contraseña en la respuesta
-        usuario.password = null;
+        user.password = null;
 
         //enviar el email
         const resultadoEmail = await authAccountEmail(
-            `${usuario.firtsName} ${usuario.lastNames}`,
-            usuario.email,
+            `${user.firtsName} ${user.lastNames}`,
+            user.email,
             token
         );
         if (resultadoEmail) {
-            res.json({ message: 'The user has been registered and a verification message has been sent to the email provided',usuario});
+            res.status(200).json({ message: 'The user has been registered and a verification message has been sent to the email provided',user});
         }else {
             res.status(503).json({ error: true, message: 'An error occurred while sending the verification email',})
         }
         //res.json({ menssage: 'El usuario a sido registrado.', usuario});
     } catch (error) {
-        console.log(error);
+        //console.log(error);
 
         let errores = [];
         if (error.errors) {
@@ -75,7 +75,7 @@ exports.add = async (req, res, next) => {
                 error: errorItem.message,
             }));
         }
-        res.json({ error: true, mensaje: 'Register Error User.' , errores });
+        res.status(400).json({ error: true, message: 'Register error user.' , errores });
     }
 };
 

@@ -5,18 +5,18 @@ const { jwtGenetator } = require('../utils/jwtGenerator');
 const renderToken = (user) => {
   // extraer los datos del usuario
   const {
-    id, firtsName, lastNames, email, role,
+    id, firtsName, lastNames, email, role, area, workstation
   } = user;
 
   // generar el token que incluya datos del usuario: id, email, role,
   // pueden agregar más datos si los necesitan validar en la sesión
   const token = jwtGenetator({
-    id, email, role,
+    id, email, role, area, workstation
   });
 
   // enviar el token al cliente, junto con los datos del usuario
   return {
-    usuario: {
+    user: {
       id, firtsName, lastNames, email,
     },
     token,
