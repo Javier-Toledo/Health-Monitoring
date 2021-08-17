@@ -6,12 +6,16 @@ const {Annotations} = require('../models');
 exports.add = async (req, res, next) => {
     try {
         // crear un paciente con los datos recibidos
-        const annotation = await Annotations.create({
-            ...req.body,
-            UserId:req.user.id,
-            PatientId:req.body.patientId,
-            date:Date.now() });
-        res.json({ mensaje: 'The annotation was saved.', annotation });
+        if(!req.body.patientId){
+            res.status(404).json({ error: true, message: 'Information is missing.'});
+        }else{
+            const annotation = await Annotations.create({
+                ...req.body,
+                UserId:req.user.id,
+                PatientId:req.body.patientId,
+                date:Date.now() });
+            res.json({ message: 'The annotation was saved.', annotation });
+        }
     } catch (error) {
         console.error(error);
         let errores=[];
@@ -23,7 +27,7 @@ exports.add = async (req, res, next) => {
         }
         res.status(503).json({
             error: true,
-            mensaje: 'Failed to save annotation.',
+            message: 'Failed to save annotation.',
             errores,
         });
         next();
