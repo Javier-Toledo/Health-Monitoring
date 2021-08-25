@@ -6,8 +6,10 @@ const {Patient, User, Subscription,DataValuePatient} = require('../models');
 exports.add = async (req, res, next) => {
     try {
         // crear un paciente con los datos recibidos
-        await Patient.create(req.body);
-        res.json({ mensaje: 'The patient was added.' });
+        const patientData = {...req.body};
+        patientData.status = 1;
+        await Patient.create(patientData);
+        res.json({ message: 'The patient was added.' });
     } catch (error) {
         console.error(error);
         let errores=[];
@@ -19,7 +21,7 @@ exports.add = async (req, res, next) => {
         }
         res.json({
             error: true,
-            mensaje: 'Failed to add patient.',
+            message: 'Failed to add patient.',
             errores,
         });
         next();
@@ -43,7 +45,7 @@ exports.updateOwn = async (req, res, next) => {
           //console.log(patient);
           //console.log(patient.users);
         if (!patient) {
-            res.status(404).json({ mensaje: 'The patient was not found.'});
+            res.status(404).json({ error: true , message: 'The patient was not found.'});
         } else {
             let newPatient = req.body;
             // actualizar en la bd
@@ -106,11 +108,11 @@ exports.updateOwn = async (req, res, next) => {
                 );
             }
             
-            return res.json({ mensaje: 'The patient was updated.' });
+            return res.json({ message: 'The patient was updated.' });
         }
     } catch (error) {
         console.log(error);
-        res.status(503).json({ mensaje: 'Failed to update patient.' });
+        res.status(503).json({ message: 'Failed to update patient.' });
     }
 };
 
@@ -130,13 +132,13 @@ exports.listPatientUser = async (req, res, next) => {
             
           });
         if(!patient) {
-            res.tatus(404).json({mensaje: 'No se encontró el paciente'})
+            res.tatus(404).json({error:true, message: 'No se encontró el paciente'})
         } else {
         res.json(patient);
         }
     } catch (error) {
         console.error(error);
-        res.json({ mensaje: 'Error reading users' });
+        res.json({ message: 'Error reading users' });
         next();
     }
 };
@@ -146,7 +148,7 @@ exports.updateManager = async (req, res, next) => {
         // obtener el registro de los pacientes desde la bd
         const patient = await Patient.findByPk(req.params.id);
         if (!patient) {
-            res.status(404).json({ mensaje: 'The patient was not found.'});
+            res.status(404).json({ error:true, message: 'The patient was not found.'});
         } else {
             // actualizar en la bd
             // procesar las propiedades que viene en body
@@ -155,10 +157,10 @@ exports.updateManager = async (req, res, next) => {
             });
             // guaradar cambios
             await patient.save();
-            res.json({ mensaje: 'The patient was updated.' });
+            res.json({ message: 'The patient was updated.' });
         }
     } catch (error) {
-        res.status(503).json({ mensaje: 'Failed to update patient.' });
+        res.status(503).json({ message: 'Failed to update patient.' });
     }
 };
 
@@ -167,7 +169,7 @@ exports.updatePatientArea = async (req, res, next) => {
         // obtener el registro del videojuego desde la bd
         const patient = await Patient.findByPk(req.params.id);
         if (!patient) {
-            res.status(404).json({ mensaje: 'The patient was not found.'});
+            res.status(404).json({ error: true, message: 'The patient was not found.'});
         } else {
                 // actualizar en la bd
                 // generate new patient
@@ -175,10 +177,10 @@ exports.updatePatientArea = async (req, res, next) => {
                 patient.area = newPatient.area;
             // guaradar cambios
             await patient.save();
-            res.json({ mensaje: 'The patient was updated from area.' });
+            res.json({ message: 'The patient was updated from area.' });
         }
     } catch (error) {
-        res.status(503).json({ mensaje: 'Failed to update patient from area.' });
+        res.status(503).json({ message: 'Failed to update patient from area.' });
         next();
         }
 };
@@ -188,12 +190,12 @@ exports.delete = async (req, res, next) => {
     try {
         const patient = await Patient.findByPk(req.params.id);
         if (!patient) {
-            res.status(404).json({ mensaje: 'The patient was not found.'});
+            res.status(404).json({ error: true, message: 'The patient was not found.'});
         } else {
             await patient.destroy(); // patient.destroy({ where: {id: req.params.id }});
-            res.json({ mensaje: 'Patient was deleted ' });
+            res.json({ message: 'Patient was deleted ' });
         }
     } catch (error) {
-        res.status(503).json({ mensaje: 'Failed to delete patient. ' });
+        res.status(503).json({ message: 'Failed to delete patient. ' });
     }
 };
