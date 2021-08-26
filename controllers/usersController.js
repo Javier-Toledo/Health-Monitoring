@@ -66,7 +66,7 @@ exports.add = async (req, res, next) => {
         }
         //res.json({ menssage: 'El usuario a sido registrado.', usuario});
     } catch (error) {
-        //console.log(error);
+        console.log(error);
 
         let errores = [];
         if (error.errors) {
