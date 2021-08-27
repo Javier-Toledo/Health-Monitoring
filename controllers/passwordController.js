@@ -1,44 +1,49 @@
 const bcrypt = require('bcrypt');
 const { Op } = require("sequelize");
-const User = require('../models');
+const {User} = require('../models');
 
 const { passwordEmail } = require('../utils/passwordEmail');
 
 exports.resetPassword = async (request, response, next) => {
     try {
-        //comprobar qe se reciba el email
+        //comprobar que se reciba el email
         if(!request.body.email) {
             response.status(400).json({
                 error: true,
                 message: 'You must provide the email.'
             });
         }
-        //buscar el usuario con ese email
-        const user = await User.findOne({
-            where: {email: request.body.email}
-        });
-        if(!user) {
-            response.status(404).json({message: 'User does not exist.'});
+        else{
+            //buscar el usuario con ese email
+            const user = await User.findOne({
+                where: { email: request.body.email }
+            });
+            if(!user) {
+                response.status(404).json({error: true, message: 'User does not exist.'});
+            }
+            else {
+                //generar el token de recuperación de contraseña
+                let token = await bcrypt.hash(user.email + Date.now().toString(), 10);
+                token = token.replace(/\//g, "l");
+                //guardar el token
+                user.passwordResetToken = token;
+                user.passwordResetExpire = Date.now() + 3600000; //expira en una hora
+                // guardar usuario
+                await user.save();
+                //enviar el email
+                const resultadoEmail = await passwordEmail(
+                    `${user.firtsName} ${user.lastNames}`,
+                    user.email,
+                    token
+                );
+                if (resultadoEmail) {
+                    response.json({ message: 'A message has been sent to the email provided.'});
+                }else {
+                    response.status(503).json({ error: true, message: 'An error occurred while sending the recovery email.',})
+                }
+            }
         }
-        //generar el token de recuperación de contraseña
-        let token = await bcrypt.hash(user.email + Date.now().toString(), 10);
-        token = token.replace(/\//g, "l");
-        //guardar el token
-        user.passwordResetToken = token;
-        user.passwordResetExpire = Date.now() + 3600000; //expira en una hora
-        // guardar usuario
-        await user.save();
-        //enviar el email
-        const resultadoEmail = await passwordEmail(
-            `${usuario.firtsName} ${usuario.lastNames}`,
-            usuario.email,
-            token
-        );
-        if (resultadoEmail) {
-            response.json({ message: 'A message has been sent to the email provided.'});
-        }else {
-            response.status(503).json({ error: true, message: 'An error occurred while sending the recovery email.',})
-        }
+        
     } catch (error) {
         console.log(error);
         response.status(503).json({ error: true, message: 'An error occurred while sending the recovery email.',})
@@ -59,12 +64,13 @@ exports.validateToken = async (request, response, next) => {
             response.status(400).json({
                 message: 'The reset password link is invalid or expired.'
             });
+        }else {
+            // en caso de que si lo encuentre retornar un status de que si es válido
+            response.json({
+                isValid: true,
+                message: 'Enter a new password.',
+            });
         }
-        // en caso de que si lo encuentre retornar un status de que si es válido
-        response.json({
-            isValid: true,
-            message: 'Enter a new password.',
-        });
     } catch (error) {
         console.log(error);
         response.status(503).json({ message: 'Token validation failed.'});
