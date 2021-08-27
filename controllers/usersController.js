@@ -1,4 +1,4 @@
-
+const { Op } = require("sequelize");
 const bcrypt = require ('bcrypt');
 const {User} = require('../models');
 
@@ -25,7 +25,7 @@ exports.add = async (req, res, next) => {
     try {
         // validar que venga la contraseña
         if (!req.body.password) {
-            res.status(400).json({ menssage: 'The password and email are required.' });
+            res.status(400).json({ error: true, message: 'The password and email are required.' });
             next();
         }
         
@@ -48,19 +48,19 @@ exports.add = async (req, res, next) => {
         userData.accountAuthExpire = Date.now() + 3600000;
 
         // guardar el usuario
-        const usuario = await User.create(userData);
+        const user = await User.create(userData);
 
         // evitar enviar la contraseña en la respuesta
-        usuario.password = null;
+        user.password = null;
 
         //enviar el email
         const resultadoEmail = await authAccountEmail(
-            `${usuario.firtsName} ${usuario.lastNames}`,
-            usuario.email,
+            `${user.firtsName} ${user.lastNames}`,
+            user.email,
             token
         );
         if (resultadoEmail) {
-            res.json({ message: 'The user has been registered and a verification message has been sent to the email provided',usuario});
+            res.status(200).json({ message: 'The user has been registered and a verification message has been sent to the email provided',user});
         }else {
             res.status(503).json({ error: true, message: 'An error occurred while sending the verification email',})
         }
@@ -75,7 +75,7 @@ exports.add = async (req, res, next) => {
                 error: errorItem.message,
             }));
         }
-        res.json({ error: true, mensaje: 'Register Error User.' , errores });
+        res.status(400).json({ error: true, message: 'Register error user.' , errores });
     }
 };
 
@@ -89,7 +89,7 @@ exports.listArea = async (req, res, next) => {
         res.json(user);
     } catch (error) {
         console.error(error);
-        res.json({ mensaje: 'Error reading users' });
+        res.status(400).json({ message: 'Error reading users' });
         next();
     }
 };
@@ -104,20 +104,20 @@ exports.listadmin = async (req, res, next) => {
         res.json(user);
     } catch (error) {
         console.error(error);
-        res.json({ mensaje: 'Error reading users' });
+        res.status(400).json({ message: 'Error reading users' });
         next();
     }
 };
 
 exports.update = async (req, res, next) => {
     try {
-        // obtener el registro del videojuego desde la bd
+        // obtener el registro del usuario desde la bd
         const user = await User.findByPk(req.params.id);
         if (!user) {
-            res.status(404).json({ mensaje: 'The user was not found.'});
+            res.status(404).json({ error: true, message: 'The user was not found.'});
         } else {
                 // actualizar en la bd
-                // generate new product
+                // generate new user
                 let newUser = req.body;
                 // if new image
                 if(req.file && req.file.filename) {
@@ -136,10 +136,45 @@ exports.update = async (req, res, next) => {
             });
             // guaradar cambios
             await user.save();
-            res.json({ mensaje: 'The record was updated.' });
+            res.json({ message: 'The record was updated.' });
         }
     } catch (error) {
-        res.status(503).json({ mensaje: 'Failed to update user.' });
+        res.status(503).json({ message: 'Failed to update user.' });
         next();
         }
+};
+
+exports.updateUserArea = async (req, res, next) => {
+    try {
+        // obtener el registro del usuario desde la bd
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            res.status(404).json({error:true, message: 'The user was not found.'});
+        } else {
+                // actualizar en la bd
+                // generate new user
+                let newUser = req.body;
+                user.area = newUser.area;
+            // guaradar cambios
+            await user.save();
+            res.json({ message: 'The user was updated from area.' });
+        }
+    } catch (error) {
+        res.status(503).json({ message: 'Failed to update user from area.' });
+    }
+};
+
+// delete User
+exports.delete = async (req, res, next) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) {
+            res.status(404).json({ error:true, message: 'The user was not found.'});
+        } else {
+            await user.destroy(); // user.destroy({ where: {id: req.params.id }});
+            res.json({ message: 'User was deleted.' });
+        }
+    } catch (error) {
+        res.status(503).json({ message: 'Failed to delete user. ' });
+    }
 };

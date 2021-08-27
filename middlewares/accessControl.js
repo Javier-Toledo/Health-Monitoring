@@ -9,7 +9,7 @@ exports.acessControl = (accion, recurso) =>
             const permiso = roles().can(request.user.role)[accion](recurso);
             if(!permiso.granted) {
                 return response.status(403).json({
-                    message: 'No autorizado para realizar esta acción.',
+                    message: 'Not authorized to perform this action.',
                 });
             }
             return next(); //continue con el proceso del request

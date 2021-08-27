@@ -12,16 +12,18 @@ exports.validateToken = async (request, response, next) => {
         });
         if(!user) {
             response.status(400).json({
+                error: true,
                 message: 'The account authentication link is invalid or has expired.'
             });
+        }else{
+            user.authentication = true ;
+            //quitar el token de recuperación
+            user.accountAuthToken = null;
+            user.accountAuthExpire = null;
+            //guardar cambios
+            await user.save();
+            response.json({ message: 'Authentication was successful. You can now log in.'});
         }
-        user.authentication = true ;
-        //quitar el token de recuperación
-        user.accountAuthToken = null;
-        user.accountAuthExpire = null;
-        //guardar cambios
-        await user.save();
-        response.json({ message: 'Authentication was successful. You can now log in.'});
     } catch (error) {
         console.log(error);
         response.status(503).json({ message: 'Failed to authentication.'});
