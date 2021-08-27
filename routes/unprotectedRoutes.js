@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 const usersController = require('../controllers/usersController');
-const sesionController = require('../controllers/SesionController');
+const sesionController = require('../controllers/sesionController');
 const accountController = require('../controllers/AccountController');
 const passwordController = require('../controllers/passwordController');
 const webPushController = require('../controllers/webPushController');

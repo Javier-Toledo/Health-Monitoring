@@ -1,5 +1,5 @@
 const {tokenAuth} = require ('../controllers/sesionController');
-const models = require ('../controllers/SocketsController');
+const models = require ('../controllers/socketsController');
 const { sendPushNotification } = require('../utils/pushNotifications');
 
 exports.chatSocket = (socket) =>
